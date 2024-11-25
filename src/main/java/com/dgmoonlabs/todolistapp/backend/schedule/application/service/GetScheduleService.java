@@ -1,20 +1,27 @@
 package com.dgmoonlabs.todolistapp.backend.schedule.application.service;
 
+import com.dgmoonlabs.todolistapp.backend.common.annotation.UseCase;
+import com.dgmoonlabs.todolistapp.backend.schedule.adapter.in.dto.GetScheduleResponses;
 import com.dgmoonlabs.todolistapp.backend.schedule.application.port.in.GetScheduleUseCase;
+import com.dgmoonlabs.todolistapp.backend.schedule.application.port.out.GetSchedulePort;
 import com.dgmoonlabs.todolistapp.backend.schedule.domain.Schedule;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-@Service
+@UseCase
+@RequiredArgsConstructor
 public class GetScheduleService implements GetScheduleUseCase {
+    private final GetSchedulePort getSchedulePort;
+
+    @Transactional(readOnly = true)
     @Override
-    public List<Schedule> getSchedules(final Schedule schedule) {
-        return List.of();
+    public GetScheduleResponses getSchedules() {
+        return GetScheduleResponses.from(getSchedulePort.getSchedules());
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Schedule getSchedule(final Schedule schedule) {
-        return null;
+    public GetScheduleResponses getSchedules(final Schedule schedule) {
+        return GetScheduleResponses.from(getSchedulePort.getSchedules(schedule));
     }
 }

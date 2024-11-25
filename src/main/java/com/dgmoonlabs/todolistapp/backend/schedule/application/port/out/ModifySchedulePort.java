@@ -1,7 +1,7 @@
-package com.dgmoonlabs.todolistapp.backend.schedule.application.port.in;
+package com.dgmoonlabs.todolistapp.backend.schedule.application.port.out;
 
 import com.dgmoonlabs.todolistapp.backend.schedule.domain.Schedule;
 
-public interface ModifyScheduleUseCase {
+public interface ModifySchedulePort {
     void modifySchedule(final Schedule schedule);
 }

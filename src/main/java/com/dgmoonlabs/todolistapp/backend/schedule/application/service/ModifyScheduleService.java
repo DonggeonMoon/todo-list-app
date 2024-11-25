@@ -1,13 +1,20 @@
 package com.dgmoonlabs.todolistapp.backend.schedule.application.service;
 
+import com.dgmoonlabs.todolistapp.backend.common.annotation.UseCase;
 import com.dgmoonlabs.todolistapp.backend.schedule.application.port.in.ModifyScheduleUseCase;
+import com.dgmoonlabs.todolistapp.backend.schedule.application.port.out.ModifySchedulePort;
 import com.dgmoonlabs.todolistapp.backend.schedule.domain.Schedule;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@UseCase
+@RequiredArgsConstructor
 public class ModifyScheduleService implements ModifyScheduleUseCase {
+    private final ModifySchedulePort modifySchedulePort;
+
+    @Transactional
     @Override
-    public boolean modifySchedule(final Schedule schedule) {
-        return true;
+    public void modifySchedule(final Schedule schedule) {
+        modifySchedulePort.modifySchedule(schedule);
     }
 }

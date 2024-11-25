@@ -1,5 +1,6 @@
-package com.dgmoonlabs.todolistapp.backend.schedule.adapter.in;
+package com.dgmoonlabs.todolistapp.backend.schedule.adapter.in.dto;
 
+import com.dgmoonlabs.todolistapp.backend.schedule.domain.Schedule;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,10 +12,14 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Getter
-public class GetScheduleResponse {
+public class GetSchedulesRequest {
     private String name;
     private String description;
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
+
+    public Schedule toSchedule() {
+        return Schedule.withoutId(name, description, date, startTime, endTime);
+    }
 }

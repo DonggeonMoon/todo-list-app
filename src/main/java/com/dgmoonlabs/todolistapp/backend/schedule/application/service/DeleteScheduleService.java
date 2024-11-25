@@ -1,12 +1,19 @@
 package com.dgmoonlabs.todolistapp.backend.schedule.application.service;
 
+import com.dgmoonlabs.todolistapp.backend.common.annotation.UseCase;
 import com.dgmoonlabs.todolistapp.backend.schedule.application.port.in.DeleteScheduleUseCase;
-import org.springframework.stereotype.Service;
+import com.dgmoonlabs.todolistapp.backend.schedule.application.port.out.DeleteSchedulePort;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@UseCase
+@RequiredArgsConstructor
 public class DeleteScheduleService implements DeleteScheduleUseCase {
+    private final DeleteSchedulePort deleteSchedulePort;
+
+    @Transactional
     @Override
-    public boolean deleteSchedule(final Long id) {
-        return true;
+    public void deleteSchedule(final Long id) {
+        deleteSchedulePort.deleteSchedule(id);
     }
 }
