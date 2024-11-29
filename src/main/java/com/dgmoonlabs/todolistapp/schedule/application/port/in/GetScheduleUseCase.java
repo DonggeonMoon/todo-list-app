@@ -5,5 +5,8 @@ import com.dgmoonlabs.todolistapp.schedule.domain.Schedule;
 
 public interface GetScheduleUseCase {
     GetScheduleResponses getSchedules();
+
     GetScheduleResponses getSchedules(final Schedule schedule);
+
+    GetScheduleResponses.SingleResponse getSchedule(final Long id);
 }

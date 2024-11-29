@@ -32,4 +32,15 @@ class ScheduleMapper {
                         )
                 ).toList();
     }
+
+    Schedule mapToModel(ScheduleJpaEntity scheduleJpaEntity) {
+        return Schedule.withId(
+                scheduleJpaEntity.getId(),
+                scheduleJpaEntity.getName(),
+                scheduleJpaEntity.getDescription(),
+                scheduleJpaEntity.getDate(),
+                scheduleJpaEntity.getStartTime(),
+                scheduleJpaEntity.getEndTime()
+        );
+    }
 }

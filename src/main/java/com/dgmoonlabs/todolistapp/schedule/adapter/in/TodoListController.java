@@ -41,6 +41,13 @@ public class TodoListController {
         );
     }
 
+    @GetMapping("/{id}")
+    public ApiResponse<GetScheduleResponses.SingleResponse> getSchedule(@PathVariable Long id) {
+        return ApiResponse.success(
+                getScheduleUseCase.getSchedule(id)
+        );
+    }
+
     @PutMapping
     public ApiResponse<Void> modifySchedule(@RequestBody ModifyScheduleRequest request) {
         modifyScheduleUseCase.modifySchedule(request.toSchedule());

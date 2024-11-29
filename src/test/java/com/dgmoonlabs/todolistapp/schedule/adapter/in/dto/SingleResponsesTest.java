@@ -7,9 +7,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GetScheduleResponsesTest extends UnitTestStub {
-
-
+class SingleResponsesTest extends UnitTestStub {
     @Test
     void from() {
         GetScheduleResponses responses = GetScheduleResponses.from(List.of(SCHEDULE, SCHEDULE));
@@ -17,8 +15,8 @@ class GetScheduleResponsesTest extends UnitTestStub {
         assertThat(responses.schedules)
                 .isEqualTo(
                         List.of(
-                                GetScheduleResponses.GetScheduleResponse.from(SCHEDULE),
-                                GetScheduleResponses.GetScheduleResponse.from(SCHEDULE)
+                                GetScheduleResponses.SingleResponse.from(SCHEDULE),
+                                GetScheduleResponses.SingleResponse.from(SCHEDULE)
                         )
                 );
     }

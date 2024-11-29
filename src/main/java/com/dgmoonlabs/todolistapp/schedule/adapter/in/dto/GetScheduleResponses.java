@@ -12,13 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class GetScheduleResponses {
-    List<GetScheduleResponse> schedules;
+    List<SingleResponse> schedules;
 
     public static GetScheduleResponses from(final List<Schedule> schedules) {
         return GetScheduleResponses.builder()
                 .schedules(
                         schedules.stream()
-                                .map(GetScheduleResponse::from)
+                                .map(SingleResponse::from)
                                 .toList()
                 )
                 .build();
@@ -29,7 +29,7 @@ public class GetScheduleResponses {
     @AllArgsConstructor
     @Getter
     @EqualsAndHashCode
-    public static class GetScheduleResponse {
+    public static class SingleResponse {
         private Long id;
         private String name;
         private String description;
@@ -37,8 +37,8 @@ public class GetScheduleResponses {
         private LocalTime startTime;
         private LocalTime endTime;
 
-        public static GetScheduleResponse from(final Schedule schedule) {
-            return GetScheduleResponse.builder()
+        public static SingleResponse from(final Schedule schedule) {
+            return SingleResponse.builder()
                     .id(schedule.id())
                     .name(schedule.name())
                     .description(schedule.description())

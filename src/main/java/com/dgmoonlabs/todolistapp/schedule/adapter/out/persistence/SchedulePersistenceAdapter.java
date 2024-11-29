@@ -40,6 +40,14 @@ public class SchedulePersistenceAdapter
     }
 
     @Override
+    public Schedule getSchedule(final Long id) {
+        return scheduleMapper.mapToModel(
+                scheduleRepository.findById(id)
+                        .orElseThrow(DataNotFoundException::new)
+        );
+    }
+
+    @Override
     public void modifySchedule(final Schedule schedule) {
         scheduleRepository.findById(schedule.id())
                 .orElseThrow(DataNotFoundException::new)

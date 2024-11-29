@@ -8,4 +8,6 @@ public interface GetSchedulePort {
     List<Schedule> getSchedules();
 
     List<Schedule> getSchedules(final Schedule schedule);
+
+    Schedule getSchedule(final Long id);
 }

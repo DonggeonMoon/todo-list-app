@@ -24,4 +24,9 @@ public class GetScheduleService implements GetScheduleUseCase {
     public GetScheduleResponses getSchedules(final Schedule schedule) {
         return GetScheduleResponses.from(getSchedulePort.getSchedules(schedule));
     }
+
+    @Override
+    public GetScheduleResponses.SingleResponse getSchedule(final Long id) {
+        return GetScheduleResponses.SingleResponse.from(getSchedulePort.getSchedule(id));
+    }
 }
