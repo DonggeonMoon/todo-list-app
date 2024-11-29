@@ -27,7 +27,7 @@ public class TodoListController {
 
     @PostMapping
     public ApiResponse<URI> addSchedule(@RequestBody AddScheduleRequest request) {
-        return ApiResponse.success(
+        return ApiResponse.createSuccess(
                 URI.create(String.format("/api/schedules/%s", addScheduleUseCase.addSchedule(request.toSchedule())))
         );
     }

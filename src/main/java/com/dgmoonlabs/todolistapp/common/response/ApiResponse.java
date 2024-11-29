@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.net.URI;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Getter
@@ -14,6 +16,10 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> success(final T data) {
         return new ApiResponse<>(new ApiHeader(ResponseCode.OK.getStatusCode(), ResponseCode.OK.getMessage()), data);
+    }
+
+    public static ApiResponse<URI> createSuccess(URI uri) {
+        return new ApiResponse<>(new ApiHeader(ResponseCode.CREATE_SUCCESS.getStatusCode(), ResponseCode.UPDATE_SUCCESS.getMessage()), uri);
     }
 
     public static ApiResponse<Void> updateSuccess() {
