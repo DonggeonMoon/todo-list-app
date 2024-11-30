@@ -1,77 +1,94 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import ScheduleEditor from "@/components/ScheduleEditor";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
+import {Schedule} from "@/types/Schedule";
 
-type Schedule = {
-    id: number;
-    name: string;
-    description: string;
-    date: string;
-    startTime: string;
-    endTime: string;
+const fetchSchedule: (id: number | null) => Promise<Schedule> = async (id: number | null) => {
+    const response = await axios.get<ApiResponse>(`/api/schedules/${id}`, {
+        headers: {"Cache-Control": "public, max-age=60"},
+    });
+    return response.data.data;
+}
+
+const deleteSchedule: (id: number | null) => Promise<AxiosResponse<ApiResponse> | undefined> = async (id: number | null) => {
+    return await axios.delete(`/api/schedules/${id}`);
 }
 
 export default function ScheduleDisplay(
-    {schedules, selectedDate}: { schedules: Schedule[], selectedDate?: string | null },
+    {selectedScheduleId, updateTrigger}: { selectedScheduleId: number | null; updateTrigger: (value: boolean) => void }
 ) {
-    const handleDeleteClick = async (e: React.FormEvent) => {
-        e.preventDefault()
-        try {
-            const response = await axios.delete(`/api/schedules/{id}`);
+    const [selectedDateSchedule, setSelectedDateSchedule] = useState<Schedule | null>(null);
 
-            if (response.data.header.code === 201) {
-                alert('성공')
-                return response.data.data;
+    useEffect(() => {
+        (async () => {
+            if (!selectedScheduleId) {
+                setSelectedDateSchedule(null);
+                return;
             }
-            alert('실패')
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
+            fetchSchedule(selectedScheduleId)
+                .then((schedule) => {
+                    setSelectedDateSchedule(schedule)
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+        })();
+    }, [selectedScheduleId])
+
+    const handleDeleteClick = async (id: number | null) => {
+        deleteSchedule(id)
+            .then((response) => {
+                if (response?.data.header.code === 204) {
+                    updateTrigger(true);
+                    setSelectedDateSchedule(null);
+                    return;
+                }
+            })
+            .catch((error) => {
+                console.error(error)
+            })
     }
+
     return (
         <div className="w-1/2 p-5 mx-auto">
             <div className="mb-5">
-                {schedules.length > 0 ? (
-                        schedules.map((schedule: Schedule) => (
-                            <div
-                                key={schedule.id}
-                                className="border border-gray-300 rounded-md p-4 mb-4 shadow-sm"
+                {selectedDateSchedule ?
+                    <div
+                        key={selectedDateSchedule.id}
+                        className="border border-gray-300 rounded-md p-4 mb-4 shadow-sm"
+                    >
+                        <p>
+                            <strong>날짜:</strong> {selectedDateSchedule.date}
+                        </p>
+                        <p>
+                            <strong>이름:</strong> {selectedDateSchedule.name}
+                        </p>
+                        <p>
+                            <strong>설명:</strong> {selectedDateSchedule.description}
+                        </p>
+                        <p>
+                            <strong>시간:</strong> {selectedDateSchedule.startTime} ~ {selectedDateSchedule.endTime}
+                        </p>
+                        <div className="mt-4 flex space-x-2">
+                            <button
+                                type="button"
+                                className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                             >
-                                <p>
-                                    <strong>날짜:</strong> {schedule.date}
-                                </p>
-                                <p>
-                                    <strong>이름:</strong> {schedule.name}
-                                </p>
-                                <p>
-                                    <strong>설명:</strong> {schedule.description}
-                                </p>
-                                <p>
-                                    <strong>시간:</strong> {schedule.startTime} ~ {schedule.endTime}
-                                </p>
-                                <div className="mt-4 flex space-x-2">
-                                    <button
-                                        type="button"
-                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                                    >
-                                        편집
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                                        onChange={handleDeleteClick}
-                                    >
-                                        삭제
-                                    </button>
-                                </div>
-                            </div>
-                        )))
-                    : (
-                        <p className="text-center text-gray-500">등록된 일정이 없습니다.</p>
-                    )}
+                                편집
+                            </button>
+                            <button
+                                type="button"
+                                className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                                onClick={() => handleDeleteClick(selectedDateSchedule.id)}
+                            >
+                                삭제
+                            </button>
+                        </div>
+                    </div>
+                    : <p className="text-center text-gray-500">등록된 일정이 없습니다.</p>
+                }
             </div>
-            <ScheduleEditor selectedDate={selectedDate}/>
+            <ScheduleEditor selectedDateSchedule={selectedDateSchedule} updateTriggerAction={updateTrigger}/>
         </div>
     );
 }

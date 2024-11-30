@@ -1,15 +1,22 @@
-'use client'
-import React, {useState} from "react";
-import axios from "axios";
+import React, {useEffect, useState} from "react";
+import axios, {AxiosError, AxiosResponse} from "axios";
+import {Schedule} from "@/types/Schedule";
 
 axios.defaults.baseURL = "http://localhost:8080";
 
-interface ScheduleEditorProps {
-
+const createSchedule: (formData: Schedule) => Promise<AxiosResponse<ApiResponse>> = async (formData: Schedule) => {
+    return await axios.post<ApiResponse>('/api/schedules', formData);
 }
 
-export default function ScheduleEditor({selectedDate}: { selectedDate?: string | null }) {
-    let [formData, setFormData] = useState({
+const modifySchedule: (formData: Schedule) => Promise<AxiosResponse<ApiResponse>> = async (formData: Schedule) => {
+    return await axios.put<ApiResponse>(`/api/schedules`, formData);
+}
+
+export default function ScheduleEditor(
+    {selectedDateSchedule, updateTriggerAction}
+    : { selectedDateSchedule?: Schedule | null, updateTriggerAction: (value: boolean) => void }
+) {
+    let [formData, setFormData] = useState<Schedule>({
         id: null,
         name: "",
         description: "",
@@ -17,6 +24,21 @@ export default function ScheduleEditor({selectedDate}: { selectedDate?: string |
         startTime: "",
         endTime: "",
     });
+
+    useEffect(() => {
+        if (selectedDateSchedule) {
+            setFormData(selectedDateSchedule);
+            return;
+        }
+        setFormData({
+            id: null,
+            name: "",
+            description: "",
+            date: "",
+            startTime: "",
+            endTime: "",
+        });
+    }, [selectedDateSchedule]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
@@ -28,25 +50,32 @@ export default function ScheduleEditor({selectedDate}: { selectedDate?: string |
 
     const handleFormData = async (e: React.FormEvent) => {
         e.preventDefault()
-        try {
-            const response = (selectedDate)
-                ? await axios.post('/api/schedules', formData)
-                : await axios.put(`/api/schedules/{formData.id}`, formData);
+        const createOrModifySchedule = (selectedDateSchedule === null)
+            ? createSchedule(formData)
+            : modifySchedule(formData);
 
-            if (response.data.header.code === 201) {
-                alert('성공')
-                return response.data.data;
+        createOrModifySchedule.then((response) => {
+            if (response.data.header.code === 201 || response.data.header.code === 204) {
+                updateTriggerAction(true);
+                setFormData({
+                    id: null,
+                    name: "",
+                    description: "",
+                    date: "",
+                    startTime: "",
+                    endTime: "",
+                });
+                return;
             }
-            alert('실패')
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
+            alert(response.data.header.message);
+        }).catch((error: AxiosError<ApiResponse>) => {
+            alert(error?.response?.data?.header.message)
+        })
     }
 
     return (
         <div className="border border-gray-300 rounded-md p-6 shadow-sm">
-            <h2 className="text-center text-lg font-bold mb-4">{selectedDate ? '새 일정 등록' : '일정 수정'}</h2>
+            <h2 className="text-center text-lg font-bold mb-4">{selectedDateSchedule ? '일정 수정' : '새 일정 등록'}</h2>
             <form onSubmit={handleFormData}>
                 <div className="mb-4">
                     <label htmlFor="date" className="block font-bold mb-2">
@@ -56,6 +85,7 @@ export default function ScheduleEditor({selectedDate}: { selectedDate?: string |
                         type="date"
                         id="date"
                         name="date"
+                        value={formData.date}
                         className="w-full border border-gray-300 rounded-md p-2"
                         onChange={handleChange}
                     />
@@ -69,6 +99,7 @@ export default function ScheduleEditor({selectedDate}: { selectedDate?: string |
                         type="time"
                         id="startTime"
                         name="startTime"
+                        value={formData.startTime}
                         className="border border-gray-300 rounded-md p-2 w-full"
                         onChange={handleChange}
                     />
@@ -81,6 +112,7 @@ export default function ScheduleEditor({selectedDate}: { selectedDate?: string |
                         type="time"
                         id="endTime"
                         name="endTime"
+                        value={formData.endTime}
                         className="border border-gray-300 rounded-md p-2 w-full"
                         onChange={handleChange}
                     />
@@ -88,13 +120,14 @@ export default function ScheduleEditor({selectedDate}: { selectedDate?: string |
 
                 <div className="mb-4">
                     <label htmlFor="name" className="block font-bold mb-2">
-                        제목:
+                        이름:
                     </label>
                     <input
                         type="text"
                         id="name"
                         name="name"
-                        placeholder="제목"
+                        value={formData.name}
+                        placeholder="이름"
                         className="w-full border border-gray-300 rounded-md p-2"
                         onChange={handleChange}
                     />
@@ -108,8 +141,10 @@ export default function ScheduleEditor({selectedDate}: { selectedDate?: string |
                         type="text"
                         id="description"
                         name="description"
+                        value={formData.description}
                         placeholder="설명"
                         className="w-full border border-gray-300 rounded-md p-2"
+                        onChange={handleChange}
                     />
                 </div>
 
@@ -117,7 +152,7 @@ export default function ScheduleEditor({selectedDate}: { selectedDate?: string |
                     type="submit"
                     className="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
                 >
-                    일정 등록
+                    {selectedDateSchedule ? "일정 수정" : "일정 등록"}
                 </button>
             </form>
         </div>

@@ -1,8 +1,9 @@
 import React from "react";
-import axios from "axios";
 import {Metadata} from "next";
 import Calendar from "@/components/Calendar";
 import NavBar from "@/components/NavBar";
+import axios from "axios";
+import {Schedule} from "@/types/Schedule";
 
 export const metadata: Metadata = {
     title: "달력"
@@ -10,24 +11,24 @@ export const metadata: Metadata = {
 
 axios.defaults.baseURL = "http://localhost:8080";
 
-export default async function Page() {
-    const fetchSchedules = async () => {
-        try {
-            const response = await axios.get('/api/schedules');
-            return response.data.data.schedules;
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
-    };
+const fetchSchedules: () => Promise<Schedule[]> = async () => {
+    try {
+        const response = await axios.get<ApiResponse>("/api/schedules", {
+            headers: {"Cache-Control": "public, max-age=60"},
+        });
+        return response.data.data.schedules;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
 
-    const schedules = await fetchSchedules();
+export default async function Page() {
+    const initialSchedules = await fetchSchedules();
     return (
-        <>
+        <main>
             <NavBar/>
-            <div className="flex justify-center">
-                <Calendar schedules={schedules}/>
-            </div>
-        </>
+            <Calendar initialSchedules={initialSchedules}/>
+        </main>
     );
 }

@@ -1,30 +1,59 @@
 'use client'
 import FullCalendar from "@fullcalendar/react";
+import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import ScheduleDisplay from "@/components/ScheduleDisplay";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import axios from "axios";
+import {Schedule} from "@/types/Schedule";
 
-type Schedule = {
-    id: number;
-    name: string;
-    description: string;
-    date: string;
-    startTime: string;
-    endTime: string;
+axios.defaults.baseURL = "http://localhost:8080";
+
+const fetchSchedules: () => Promise<Schedule[]> = async () => {
+    const response = await axios.get<ApiResponse>("/api/schedules", {
+        headers: {"Cache-Control": "public, max-age=60"},
+    });
+    return response.data.data.schedules;
 }
 
-export default function Calendar({schedules}: { schedules: Schedule[] }) {
-    const [selectedDate, setSelectedDate] = useState<string | null>('2022-11-29');
-    return (<>
+export default function Calendar({initialSchedules}: { initialSchedules: Schedule[] }) {
+    const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
+    const [schedules, setSchedules] = useState<Schedule[]>(initialSchedules);
+    const [shouldFetch, setShouldFetch] = useState(true)
+
+    useEffect(() => {
+        if (!shouldFetch) return;
+        fetchSchedules()
+            .then((schedules) => setSchedules(schedules))
+            .catch((error) => {
+                console.error(error)
+            }).finally(() => setShouldFetch(false));
+    }, [shouldFetch]);
+
+    return (
+        <div className="flex justify-center">
             <div className="w-1/2 p-5">
                 <FullCalendar
-                    plugins={[dayGridPlugin]}
+                    plugins={[dayGridPlugin, interactionPlugin]}
                     initialView="dayGridMonth"
                     locale="ko"
-                    events={schedules.map(i => ({title: i.name, date: i.date}))}
+                    events={schedules.map(i => ({
+                        title: i.name,
+                        date: i.date,
+                        extendedProps: {
+                            id: i.id
+                        }
+                    }))}
+                    eventClick={(info) => {
+                        setSelectedScheduleId(info.event.extendedProps.id)
+                    }}
+                    dateClick={() => {
+                        setSelectedScheduleId(null);
+                    }}
+
                 />
             </div>
-            <ScheduleDisplay schedules={schedules} selectedDate={selectedDate}/>
-        </>
+            <ScheduleDisplay selectedScheduleId={selectedScheduleId} updateTrigger={setShouldFetch}/>
+        </div>
     )
 }
