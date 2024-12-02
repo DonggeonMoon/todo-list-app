@@ -7,6 +7,7 @@ export default function NavBar() {
                 <li className="p-2"><Link href="/">Home</Link></li>
                 <li className="p-2"><Link href="/about">About</Link></li>
                 <li className="p-2"><Link href="/calendar">Calendar</Link></li>
+                <li className="p-2"><Link href="/login">Sign In</Link></li>
             </ul>
         </header>
     )
