@@ -6,21 +6,16 @@ import axios from "axios";
 import {Schedule} from "@/types/Schedule";
 
 export const metadata: Metadata = {
-    title: "달력"
+    title: "할 일"
 }
 
 axios.defaults.baseURL = "http://localhost:8080";
 
 const fetchSchedules: () => Promise<Schedule[]> = async () => {
-    try {
-        const response = await axios.get<ApiResponse>("/api/schedules", {
-            headers: {"Cache-Control": "public, max-age=60"},
-        });
-        return response.data.data.schedules;
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
+    const response = await axios.get<ApiResponse>("/api/schedules", {
+        headers: {"Cache-Control": "public, max-age=60"},
+    });
+    return response.data.data.schedules;
 }
 
 export default async function Page() {

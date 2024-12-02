@@ -16,7 +16,7 @@ const fetchSchedules: () => Promise<Schedule[]> = async () => {
     return response.data.data.schedules;
 }
 
-export default function Calendar({initialSchedules}: { initialSchedules: Schedule[] }) {
+export default function Calendar({initialSchedules}: Readonly<{ initialSchedules: Schedule[] }>) {
     const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
     const [schedules, setSchedules] = useState<Schedule[]>(initialSchedules);
     const [shouldFetch, setShouldFetch] = useState(true)
@@ -37,12 +37,16 @@ export default function Calendar({initialSchedules}: { initialSchedules: Schedul
                     plugins={[dayGridPlugin, interactionPlugin]}
                     initialView="dayGridMonth"
                     locale="ko"
+                    buttonText={{
+                        today: '이번달'
+                    }}
                     events={schedules.map(i => ({
                         title: i.name,
                         date: i.date,
                         extendedProps: {
                             id: i.id
-                        }
+                        },
+
                     }))}
                     eventClick={(info) => {
                         setSelectedScheduleId(info.event.extendedProps.id)

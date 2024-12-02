@@ -14,7 +14,10 @@ const modifySchedule: (formData: Schedule) => Promise<AxiosResponse<ApiResponse>
 
 export default function ScheduleEditor(
     {selectedDateSchedule, updateTriggerAction}
-    : { selectedDateSchedule?: Schedule | null, updateTriggerAction: (value: boolean) => void }
+    : Readonly<{
+        selectedDateSchedule?: Schedule | null,
+        updateTriggerAction: (value: boolean) => void
+    }>
 ) {
     let [formData, setFormData] = useState<Schedule>({
         id: null,

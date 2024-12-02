@@ -15,7 +15,11 @@ const deleteSchedule: (id: number | null) => Promise<AxiosResponse<ApiResponse> 
 }
 
 export default function ScheduleDisplay(
-    {selectedScheduleId, updateTrigger}: { selectedScheduleId: number | null; updateTrigger: (value: boolean) => void }
+    {selectedScheduleId, updateTrigger}:
+    Readonly<{
+        selectedScheduleId: number | null;
+        updateTrigger: (value: boolean) => void
+    }>
 ) {
     const [selectedDateSchedule, setSelectedDateSchedule] = useState<Schedule | null>(null);
 
@@ -41,7 +45,6 @@ export default function ScheduleDisplay(
                 if (response?.data.header.code === 204) {
                     updateTrigger(true);
                     setSelectedDateSchedule(null);
-                    return;
                 }
             })
             .catch((error) => {
