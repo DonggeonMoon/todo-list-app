@@ -10,3 +10,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+secret_key: abcddafdafadfadfdsfadfaddsafasdfdasf
+access_token_expiry_time: 1800
+refresh_token_expiry_time: 7200
