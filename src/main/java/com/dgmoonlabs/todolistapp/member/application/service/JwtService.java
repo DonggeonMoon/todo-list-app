@@ -20,10 +20,10 @@ public class JwtService {
     @Value("${secret_key}")
     private String secretKey;
 
-    @Value("${access_token_expiry_time")
+    @Value("${access_token_expiry_time}")
     private int accessTokenExpiryTime;
 
-    @Value("${refresh_token_expiry_time")
+    @Value("${refresh_token_expiry_time}")
     private int refreshTokenExpiryTime;
 
 
