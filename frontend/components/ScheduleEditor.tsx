@@ -58,7 +58,7 @@ export default function ScheduleEditor(
             : modifySchedule(formData);
 
         createOrModifySchedule.then((response) => {
-            if (response.data.header.code === 201 || response.data.header.code === 204) {
+            if (response.status === 201 || response.status === 204) {
                 updateTriggerAction(true);
                 setFormData({
                     id: null,
@@ -70,9 +70,9 @@ export default function ScheduleEditor(
                 });
                 return;
             }
-            alert(response.data.header.message);
+            alert(response.data.message);
         }).catch((error: AxiosError<ApiResponse>) => {
-            alert(error?.response?.data?.header.message)
+            alert(error?.response?.data?.message)
         })
     }
 

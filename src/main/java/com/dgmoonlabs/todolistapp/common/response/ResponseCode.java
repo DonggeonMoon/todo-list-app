@@ -3,6 +3,7 @@ package com.dgmoonlabs.todolistapp.common.response;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 @RequiredArgsConstructor
 @Getter
@@ -14,10 +15,6 @@ public enum ResponseCode {
     INVALID_TIME(HttpStatus.BAD_REQUEST, "종료 시간이 시작 시간보다 빠릅니다."),
     DATA_NOT_FOUND(HttpStatus.NOT_FOUND, "데이터가 존재하지 않습니다.");
 
-    private final HttpStatus status;
+    private final HttpStatusCode statusCode;
     private final String message;
-
-    public int getStatusCode() {
-        return status.value();
-    }
 }

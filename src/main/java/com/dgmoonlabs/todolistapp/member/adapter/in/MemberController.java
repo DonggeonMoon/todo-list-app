@@ -9,6 +9,7 @@ import com.dgmoonlabs.todolistapp.member.application.port.in.DeleteMemberUseCase
 import com.dgmoonlabs.todolistapp.member.application.port.in.GetMemberUseCase;
 import com.dgmoonlabs.todolistapp.member.application.port.in.ModifyMemberUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -23,27 +24,27 @@ public class MemberController {
     private final ModifyMemberUseCase modifyMemberUseCase;
 
     @GetMapping
-    public ApiResponse<URI> addMember(@RequestBody AddMemberRequest request) {
+    public ResponseEntity<ApiResponse.Response<URI>> addMember(@RequestBody AddMemberRequest request) {
         return ApiResponse.createSuccess(
                 URI.create(String.format("/members/%s", addMemberUseCase.addMember(request.toMember())))
         );
     }
 
     @PostMapping("/{id}")
-    public ApiResponse<GetMemberResponse> getMember(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse.Response<GetMemberResponse>> getMember(@PathVariable Long id) {
         return ApiResponse.success(
                 getMemberUseCase.getMember(id)
         );
     }
 
     @PutMapping
-    public ApiResponse<Void> modifyMember(@RequestBody ModifyMemberRequest request) {
+    public ResponseEntity<ApiResponse.Response<Void>> modifyMember(@RequestBody ModifyMemberRequest request) {
         modifyMemberUseCase.modifyMember(request.toMember());
         return ApiResponse.updateSuccess();
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteMember(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse.Response<Void>> deleteMember(@PathVariable Long id) {
         deleteMemberUseCase.deleteMember(id);
         return ApiResponse.deleteSuccess();
     }

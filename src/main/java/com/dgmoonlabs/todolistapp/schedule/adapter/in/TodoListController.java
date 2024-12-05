@@ -11,6 +11,7 @@ import com.dgmoonlabs.todolistapp.schedule.application.port.in.DeleteScheduleUse
 import com.dgmoonlabs.todolistapp.schedule.application.port.in.GetScheduleUseCase;
 import com.dgmoonlabs.todolistapp.schedule.application.port.in.ModifyScheduleUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -26,14 +27,14 @@ public class TodoListController {
     private final ModifyScheduleUseCase modifyScheduleUseCase;
 
     @PostMapping
-    public ApiResponse<URI> addSchedule(@RequestBody AddScheduleRequest request) {
+    public ResponseEntity<ApiResponse.Response<URI>> addSchedule(@RequestBody AddScheduleRequest request) {
         return ApiResponse.createSuccess(
                 URI.create(String.format("/api/schedules/%s", addScheduleUseCase.addSchedule(request.toSchedule())))
         );
     }
 
     @GetMapping
-    public ApiResponse<GetScheduleResponses> getSchedules(@RequestBody(required = false) GetSchedulesRequest request) {
+    public ResponseEntity<ApiResponse.Response<GetScheduleResponses>> getSchedules(@RequestBody(required = false) GetSchedulesRequest request) {
         return ApiResponse.success(
                 request == null
                         ? getScheduleUseCase.getSchedules()
@@ -42,20 +43,20 @@ public class TodoListController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<GetScheduleResponses.SingleResponse> getSchedule(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse.Response<GetScheduleResponses.SingleResponse>> getSchedule(@PathVariable Long id) {
         return ApiResponse.success(
                 getScheduleUseCase.getSchedule(id)
         );
     }
 
     @PutMapping
-    public ApiResponse<Void> modifySchedule(@RequestBody ModifyScheduleRequest request) {
+    public ResponseEntity<ApiResponse.Response<Void>> modifySchedule(@RequestBody ModifyScheduleRequest request) {
         modifyScheduleUseCase.modifySchedule(request.toSchedule());
         return ApiResponse.updateSuccess();
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteSchedule(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse.Response<Void>> deleteSchedule(@PathVariable Long id) {
         deleteScheduleUseCase.deleteSchedule(id);
         return ApiResponse.deleteSuccess();
     }

@@ -42,7 +42,7 @@ export default function ScheduleDisplay(
     const handleDeleteClick = async (id: number | null) => {
         deleteSchedule(id)
             .then((response) => {
-                if (response?.data.header.code === 204) {
+                if (response?.status === 204) {
                     updateTrigger(true);
                     setSelectedDateSchedule(null);
                 }

@@ -6,6 +6,7 @@ import com.dgmoonlabs.todolistapp.member.adapter.in.dto.AuthenticationResponse;
 import com.dgmoonlabs.todolistapp.member.adapter.in.dto.RefreshTokenRequest;
 import com.dgmoonlabs.todolistapp.member.application.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,7 @@ public class AuthenticationController {
     private final JwtService jwtService;
 
     @PostMapping("/authenticate")
-    public ApiResponse<AuthenticationResponse> requestTokens(@RequestBody AuthenticationRequest request) {
+    public ResponseEntity<ApiResponse.Response<AuthenticationResponse>> requestTokens(@RequestBody AuthenticationRequest request) {
         return ApiResponse.success(
                 AuthenticationResponse.of(
                         jwtService.generateAccessToken(request.getUsername(), request.getPassword()),
@@ -26,7 +27,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<ApiResponse.Response<AuthenticationResponse>> refreshToken(@RequestBody RefreshTokenRequest request) {
         return ApiResponse.success(
                 AuthenticationResponse.of(
                         jwtService.generateAccessToken("", ""),
